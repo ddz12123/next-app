@@ -6,6 +6,9 @@ import axios, {
   AxiosError,
 } from "axios";
 
+import { message as antdMessage } from "antd";
+import { getToken } from "@/src/utils/storage";
+
 // 创建接口定义，方便类型检查
 export interface RequestConfig extends AxiosRequestConfig {
   // 是否跳过token验证（默认false）
@@ -23,7 +26,7 @@ export interface RequestConfig extends AxiosRequestConfig {
 export interface CustomResponse<T = never> {
   code: number;
   data: T;
-  message: string;
+  msg: string;
 }
 
 const API_BASE_URL = "";
@@ -51,7 +54,7 @@ const createAxiosInstance = (): AxiosInstance => {
 
       // 添加token（除非明确跳过）
       if (!skipAuth) {
-        const token = "";
+        const token = getToken();
         if (token) {
           requestConfig.headers.Authorization = `Bearer ${token}`;
         }
@@ -103,18 +106,18 @@ const createAxiosInstance = (): AxiosInstance => {
           const requestConfig = response.config as RequestConfig;
           if (requestConfig.showError !== false) {
             showMessage(
-              requestConfig.errorMessage || data.message || "请求失败",
+              requestConfig.errorMessage || data.msg || "请求失败",
               "error",
             );
           }
 
-          return Promise.reject(new Error(data.message || "请求失败"));
+          return Promise.reject(new Error(data.msg || "请求失败"));
         }
 
         // 显示成功消息
         const requestConfig = response.config as RequestConfig;
-        if (requestConfig.showSuccess && data.message) {
-          showMessage(requestConfig.successMessage || data.message, "success");
+        if (requestConfig.showSuccess && data.msg) {
+          showMessage(requestConfig.successMessage || data.msg, "success");
         }
 
         // 直接返回data数据
@@ -181,15 +184,10 @@ const showMessage = (
   if (typeof window !== "undefined") {
     // 这里可以使用你项目中的UI组件，如Antd的message、Toast等
     console.log(`${type}: ${message}`);
-
     // 示例：使用浏览器的alert
-    // if (type === 'error') {
-    //   alert(message);
-    // }
-
-    // 或者使用第三方通知库
-    // import { toast } from 'react-hot-toast';
-    // toast[type](message);
+    if (type === "error") {
+      antdMessage.error(message);
+    }
   }
 };
 

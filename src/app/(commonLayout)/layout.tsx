@@ -2,8 +2,9 @@
 
 import { useEffect } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 // import { AntdRegistry } from "@ant-design/nextjs-registry";
+import styles from "./layout.module.scss";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +40,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className={styles.container}>
+          <div className={styles.header}>header</div>
+          {children}
+        </div>
       </body>
     </html>
   );

@@ -3,65 +3,54 @@ import { axiosInstance, RequestConfig, CustomResponse } from "./axiosInstance";
 // 统一的请求方法封装
 class Request {
   // GET请求
-  async get<T = never>(url: string, config?: RequestConfig): Promise<T> {
-    const response = await axiosInstance.get<CustomResponse<T>>(url, config);
-    return response.data.data;
+  get<T = any>(
+    url: string,
+    config?: RequestConfig,
+  ): Promise<CustomResponse<T>> {
+    return axiosInstance.get<T, CustomResponse<T>>(url, config);
   }
 
   // POST请求
-  async post<T = never>(
+  post<T = any>(
     url: string,
-    data?: never,
+    data?: any,
     config?: RequestConfig,
-  ): Promise<T> {
-    const response = await axiosInstance.post<CustomResponse<T>>(
-      url,
-      data,
-      config,
-    );
-    return response.data.data;
+  ): Promise<CustomResponse<T>> {
+    return axiosInstance.post<T, CustomResponse<T>>(url, data, config);
   }
 
   // PUT请求
-  async put<T = never>(
+  put<T = any>(
     url: string,
-    data?: never,
+    data?: any,
     config?: RequestConfig,
-  ): Promise<T> {
-    const response = await axiosInstance.put<CustomResponse<T>>(
-      url,
-      data,
-      config,
-    );
-    return response.data.data;
+  ): Promise<CustomResponse<T>> {
+    return axiosInstance.put<T, CustomResponse<T>>(url, data, config);
   }
 
   // PATCH请求
-  async patch<T = never>(
+  patch<T = any>(
     url: string,
-    data?: never,
+    data?: any,
     config?: RequestConfig,
-  ): Promise<T> {
-    const response = await axiosInstance.patch<CustomResponse<T>>(
-      url,
-      data,
-      config,
-    );
-    return response.data.data;
+  ): Promise<CustomResponse<T>> {
+    return axiosInstance.patch<T, CustomResponse<T>>(url, data, config);
   }
 
   // DELETE请求
-  async delete<T = never>(url: string, config?: RequestConfig): Promise<T> {
-    const response = await axiosInstance.delete<CustomResponse<T>>(url, config);
-    return response.data.data;
+  delete<T = any>(
+    url: string,
+    config?: RequestConfig,
+  ): Promise<CustomResponse<T>> {
+    return axiosInstance.delete<T, CustomResponse<T>>(url, config);
   }
 
   // 上传文件
-  async upload<T = never>(
+  upload<T = any>(
     url: string,
     file: File,
     config?: RequestConfig,
-  ): Promise<T> {
+  ): Promise<CustomResponse<T>> {
     const formData = new FormData();
     formData.append("file", file);
 
@@ -77,12 +66,11 @@ class Request {
   }
 
   // 下载文件
-  async download(url: string, config?: RequestConfig): Promise<Blob> {
-    const response = await axiosInstance.get<Blob>(url, {
+  download(url: string, config?: RequestConfig): Promise<CustomResponse<Blob>> {
+    return axiosInstance.get<Blob, CustomResponse<Blob>>(url, {
       ...config,
       responseType: "blob",
     });
-    return response.data;
   }
 
   // 设置baseURL

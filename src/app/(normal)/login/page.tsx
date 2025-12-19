@@ -16,7 +16,6 @@ import {
   type LoginData,
 } from "@/src/request/user/user-api";
 import { useRouter } from "next/navigation";
-
 import { setToken } from "@/src/utils/storage";
 
 type FieldType = {
@@ -48,9 +47,14 @@ export default function LoginPage() {
       username: values.username,
       password: values.password,
     };
-    loginApi(params as LoginData).then((res) => {
+    loginApi(params as LoginData).then(async (res) => {
       if (res.code == 200) {
         setToken(res.data.token);
+        await fetch("/api/set-token", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token: res.data.token }),
+        });
         router.push("/");
       }
     });
