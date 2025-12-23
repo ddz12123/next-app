@@ -8,8 +8,8 @@ const nextConfig: NextConfig = {
     const ginApiBaseUrl = process.env.NEXT_PUBLIC_GIN_API_BASE_URL;
     return [
       {
-        source: "/gin/:path*",
-        destination: `${ginApiBaseUrl}/:path*`,
+        source: "/api/:path*",
+        destination: `${ginApiBaseUrl}/api/:path*`,
       },
     ];
   },

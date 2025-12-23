@@ -29,7 +29,7 @@ export interface CustomResponse<T = never> {
   msg: string;
 }
 
-const API_BASE_URL = "/gin/api/v1";
+const API_BASE_URL = "/api";
 
 // 创建axios实例
 const createAxiosInstance = (): AxiosInstance => {
@@ -98,7 +98,7 @@ const createAxiosInstance = (): AxiosInstance => {
           if (data.code === 401) {
             // 跳转到登录页
             if (typeof window !== "undefined") {
-              window.location.href = "/login";
+              //window.location.href = "/login";
             }
           }
 
