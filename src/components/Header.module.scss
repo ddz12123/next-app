@@ -1,0 +1,261 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  padding: 0 48px !important;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+}
+
+.headerScrolled {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.headerContent {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+}
+
+.logoText {
+  font-size: 18px !important;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.navSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.navLink {
+  border: none;
+  background: transparent;
+  color: #595959;
+  font-size: 14px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+  outline: none !important;
+
+  &:hover {
+    background: #f5f5f5;
+    color: #4f46e5;
+  }
+
+  &:focus {
+    background: #f5f5f5;
+    color: #4f46e5;
+  }
+
+  &:active {
+    background: #e8e8e8;
+  }
+}
+
+.navLinkActive {
+  background: #f0f0ff;
+  color: #4f46e5;
+  font-weight: 500;
+
+  &:hover {
+    background: #e6e6ff;
+    color: #4f46e5;
+  }
+
+  &:focus {
+    background: #e6e6ff;
+    color: #4f46e5;
+  }
+}
+
+.authSection {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.loginButton {
+  border: none;
+  background: transparent;
+  color: #595959;
+  font-size: 14px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  transition: all 0.2s ease;
+  box-shadow: none !important;
+  outline: none !important;
+
+  &:hover {
+    background: #f5f5f5;
+    color: #4f46e5;
+  }
+
+  &:focus {
+    background: #f5f5f5;
+    color: #4f46e5;
+  }
+
+  &:active {
+    background: #e8e8e8;
+  }
+}
+
+.registerButton {
+  height: 36px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: #fff;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 0.9;
+    color: #fff;
+    transform: translateY(-1px);
+  }
+
+  &:focus {
+    opacity: 0.9;
+    color: #fff;
+  }
+
+  &:active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mobileMenuButton {
+  display: none !important;
+  border: none;
+  background: transparent;
+  color: #595959;
+  font-size: 20px;
+  height: 36px;
+  width: 36px;
+  padding: 0;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #f5f5f5;
+    color: #1890ff;
+  }
+}
+
+.mobileDrawer {
+  .ant-drawer-body {
+    padding: 0;
+  }
+}
+
+.mobileNavContent {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.mobileNavLink {
+  display: flex;
+  justify-content: flex-start;
+  height: 48px;
+  padding: 0 16px;
+  border-radius: 8px;
+  color: #1a1a1a;
+  font-size: 15px;
+  margin-bottom: 4px;
+
+  &:hover {
+    background: #f5f5f5;
+    color: #1890ff;
+  }
+}
+
+.drawerSectionTitle {
+  display: block;
+  padding: 16px 16px 8px;
+  font-size: 12px;
+  color: #8c8c8c;
+  font-weight: 500;
+}
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 0 24px !important;
+  }
+
+  .navSection {
+    display: none;
+  }
+
+  .mobileMenuButton {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .logoText {
+    display: none;
+  }
+
+  .authSection {
+    gap: 8px;
+  }
+
+  .loginButton {
+    padding: 0 12px;
+  }
+
+  .registerButton {
+    padding: 0 16px;
+  }
+}

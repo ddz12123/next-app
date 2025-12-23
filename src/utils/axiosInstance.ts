@@ -7,7 +7,7 @@ import axios, {
 } from "axios";
 
 import { message as antdMessage } from "antd";
-import { getToken } from "@/src/utils/storage";
+import { getToken } from "@/utils/storage";
 
 // 创建接口定义，方便类型检查
 export interface RequestConfig extends AxiosRequestConfig {
@@ -29,7 +29,7 @@ export interface CustomResponse<T = never> {
   msg: string;
 }
 
-const API_BASE_URL = "";
+const API_BASE_URL = "/gin/api/v1";
 
 // 创建axios实例
 const createAxiosInstance = (): AxiosInstance => {

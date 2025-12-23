@@ -1,0 +1,73 @@
+.footer {
+  background: #fff !important;
+  border-top: 1px solid #f0f0f0;
+  padding: 24px 48px !important;
+}
+
+.footerContent {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.copyright {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.copyrightText {
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+.versionText {
+  color: #bfbfbf;
+  font-size: 12px;
+  padding: 2px 8px;
+  background: #fafafa;
+  border-radius: 4px;
+}
+
+.beianInfo {
+  display: flex;
+  align-items: center;
+}
+
+.beianLinks {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.beianLink {
+  color: #8c8c8c;
+  font-size: 12px;
+  transition: color 0.3s ease;
+
+  &:hover {
+    color: #1890ff;
+  }
+}
+
+.beianText {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: 16px 24px !important;
+  }
+
+  .copyright {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

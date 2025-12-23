@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-// import { AntdRegistry } from "@ant-design/nextjs-registry";
 import styles from "./layout.module.scss";
+import AppHeader from "@/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,28 +23,23 @@ export default function RootLayout({
 }>) {
   useEffect(() => {
     const setRemBase = () => {
-      const designWidth = 1920; // 1920 设计稿
+      const designWidth = 1920;
       const clientWidth = document.documentElement.clientWidth;
-      // 计算缩放比例：默认 16px，按屏幕宽度缩放，但最小不低于 10px
-      const baseFontSize = Math.max(16 * (clientWidth / designWidth), 10);
-      // 最终 html font-size = 计算值（≥10px，默认16px）
+      const baseFontSize = Math.max(16 * (clientWidth / designWidth), 12);
       document.documentElement.style.fontSize = `${baseFontSize}px`;
     };
 
-    setRemBase(); // 初始化
+    setRemBase();
     window.addEventListener("resize", setRemBase);
     return () => window.removeEventListener("resize", setRemBase);
   }, []);
+
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className={styles.container}>
-          <div className={styles.header}>header</div>
-          {children}
-        </div>
-      </body>
-    </html>
+    <div
+      className={`${geistSans.variable} ${geistMono.variable} antialiased ${styles.container}`}
+    >
+      <AppHeader />
+      {children}
+    </div>
   );
 }

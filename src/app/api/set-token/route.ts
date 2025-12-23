@@ -1,6 +1,6 @@
 // app/api/set-token/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { TOKEN_KEY } from "@/src/utils/storage";
+import { TOKEN_KEY } from "@/utils/storage";
 
 export async function POST(req: NextRequest) {
   const { token } = await req.json();

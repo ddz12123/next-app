@@ -1,8 +1,8 @@
-import { post } from "@/src/utils/request";
+import { post } from "@/utils/request";
 
 // 获取图形验证码
 export async function getCaptchaApi() {
-  return await post("/gin/api/captcha/generate", {
+  return await post("/captcha/generate", {
     captcha_type: "math",
     width: 240,
     height: 40,
@@ -18,5 +18,5 @@ export interface LoginData {
 
 // 登录
 export async function loginApi(data: LoginData) {
-  return await post("/gin/api/v1/auth/login", data);
+  return await post("/auth/login", data);
 }

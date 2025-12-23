@@ -14,9 +14,9 @@ import {
   getCaptchaApi,
   loginApi,
   type LoginData,
-} from "@/src/request/user/user-api";
+} from "@/request/user/user-api";
 import { useRouter } from "next/navigation";
-import { setToken } from "@/src/utils/storage";
+import { setToken } from "@/utils/storage";
 
 type FieldType = {
   username?: string;

@@ -1,7 +1,7 @@
 // 根目录/proxy.ts（全局鉴权 Proxy）
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { TOKEN_KEY } from "@/src/utils/storage";
+import { TOKEN_KEY } from "@/utils/storage";
 
 // 定义需要登录的受保护路由
 const protectedRoutes = ["/dashboard", "/profile", "/settings"];
