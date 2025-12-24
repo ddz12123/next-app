@@ -1,13 +1,8 @@
 .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   height: 64px !important;
   background: rgba(255, 255, 255, 0.8) !important;
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  z-index: 1000;
   transition: all 0.3s ease;
   padding: 0 48px !important;
   box-sizing: border-box;
@@ -89,18 +84,18 @@
 }
 
 .navLinkActive {
-  background: #f0f0ff;
-  color: #4f46e5;
+  background: #f0f0ff !important;
+  color: #4f46e5 !important;
   font-weight: 500;
 
   &:hover {
-    background: #e6e6ff;
-    color: #4f46e5;
+    background: #e6e6ff !important;
+    color: #4f46e5 !important;
   }
 
   &:focus {
-    background: #e6e6ff;
-    color: #4f46e5;
+    background: #e6e6ff !important;
+    color: #4f46e5 !important;
   }
 }
 

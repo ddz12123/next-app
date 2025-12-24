@@ -2,7 +2,8 @@
 import clsx from "clsx";
 import styles from "./login.module.scss";
 import type { FormProps } from "antd";
-import { Button, Form, Input, Space, Image } from "antd";
+import { Button, Form, Input, Space } from "antd";
+import Image from "next/image";
 import {
   LockOutlined,
   UserOutlined,
@@ -75,11 +76,10 @@ export default function LoginPage() {
       <div className={clsx(styles.loginBox, "flex", "flex-col")}>
         <div className={clsx(styles.leftSection)}>
           <Image
-            src={`${basePath}/next-public/images/login/login-box-img.png`}
+            src="/hub/next-public/images/login/login-box-img.png"
             alt="logo"
-            width="360px"
-            preview={false}
-            height="360px"
+            width="360"
+            height="360"
           />
         </div>
         <div className={clsx(styles.rightSection)}>
@@ -127,9 +127,9 @@ export default function LoginPage() {
                     <Image
                       src={captcha}
                       alt="captcha"
-                      width="240px"
-                      height="40px"
-                      preview={false}
+                      width="120"
+                      height="40"
+                      style={{ width: "7.5rem" }}
                       className={clsx("ml-2", "cursor-pointer")}
                       onClick={getCaptchaHandler}
                     />

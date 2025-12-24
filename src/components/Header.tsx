@@ -32,6 +32,7 @@ const { Header } = Layout;
 export default function AppHeader() {
   const router = useRouter();
   const pathname = usePathname();
+  const [activePath, setActivePath] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [navItems, setNavItems] = useState([
@@ -83,6 +84,10 @@ export default function AppHeader() {
     // fetchNavData();
   }, []);
 
+  useEffect(() => {
+    setActivePath(pathname);
+  }, [pathname]);
+
   const userMenuItems: MenuProps["items"] = [
     {
       key: "profile",
@@ -103,17 +108,6 @@ export default function AppHeader() {
       danger: true,
     },
   ];
-
-  const itemClick = (path: string) => {
-    //console.log("Navigating to:", path);
-    router.push(path);
-  };
-
-  const isActive = (path: string) => {
-    const active = pathname === path;
-    //console.log(`Checking ${path} vs ${pathname}: ${active}`);
-    return active;
-  };
 
   const onLogin = () => {
     router.push("/login");
@@ -141,7 +135,6 @@ export default function AppHeader() {
           <div className={styles.navSection}>
             <Space size={4}>
               {navItems.map((item) => {
-                const active = isActive(item.path);
                 return (
                   <Button
                     key={item.key}
@@ -149,10 +142,10 @@ export default function AppHeader() {
                     type="text"
                     className={clsx(
                       styles.navLink,
-                      active && styles.navLinkActive
+                      activePath === item.path && styles.navLinkActive
                     )}
                     icon={item.icon}
-                    onClick={() => itemClick(item.path)}
+                    onClick={() => router.push(item.path)}
                   >
                     {item.label}
                   </Button>

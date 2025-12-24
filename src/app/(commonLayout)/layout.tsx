@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
 import styles from "./layout.module.scss";
 import AppHeader from "@/components/Header";
+import { Affix } from "antd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,9 @@ export default function RootLayout({
     <div
       className={`${geistSans.variable} ${geistMono.variable} antialiased ${styles.container}`}
     >
-      <AppHeader />
+      <Affix offsetTop={0}>
+        <AppHeader />
+      </Affix>
       {children}
     </div>
   );

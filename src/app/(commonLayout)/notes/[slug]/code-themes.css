@@ -1,0 +1,203 @@
+[data-theme="github-light"] {
+  --shiki-color-background: #ffffff;
+  --shiki-color-text: #24292e;
+  --shiki-token-constant: #005cc5;
+  --shiki-token-string: #032f62;
+  --shiki-token-comment: #6a737d;
+  --shiki-token-keyword: #d73a49;
+  --shiki-token-function: #6f42c1;
+  --shiki-token-number: #005cc5;
+  --shiki-token-operator: #d73a49;
+  --shiki-token-punctuation: #24292e;
+  --shiki-token-property: #005cc5;
+  --shiki-token-tag: #22863a;
+  --shiki-token-attr-name: #6f42c1;
+  --shiki-token-attr-value: #032f62;
+  --shiki-token-attr-punctuation: #24292e;
+  --shiki-token-link: #005cc5;
+  --shiki-token-regexp: #032f62;
+}
+
+[data-theme="github-dark"] {
+  --shiki-color-background: #0d1117;
+  --shiki-color-text: #c9d1d9;
+  --shiki-token-constant: #79c0ff;
+  --shiki-token-string: #a5d6ff;
+  --shiki-token-comment: #8b949e;
+  --shiki-token-keyword: #ff7b72;
+  --shiki-token-function: #d2a8ff;
+  --shiki-token-number: #79c0ff;
+  --shiki-token-operator: #ff7b72;
+  --shiki-token-punctuation: #c9d1d9;
+  --shiki-token-property: #79c0ff;
+  --shiki-token-tag: #7ee787;
+  --shiki-token-attr-name: #d2a8ff;
+  --shiki-token-attr-value: #a5d6ff;
+  --shiki-token-attr-punctuation: #c9d1d9;
+  --shiki-token-link: #79c0ff;
+  --shiki-token-regexp: #a5d6ff;
+}
+
+[data-theme="one-light"] {
+  --shiki-color-background: #fafafa;
+  --shiki-color-text: #383a42;
+  --shiki-token-constant: #e45649;
+  --shiki-token-string: #50a14f;
+  --shiki-token-comment: #a0a1a7;
+  --shiki-token-keyword: #a626a4;
+  --shiki-token-function: #4078f2;
+  --shiki-token-number: #986801;
+  --shiki-token-operator: #383a42;
+  --shiki-token-punctuation: #383a42;
+  --shiki-token-property: #4078f2;
+  --shiki-token-tag: #e45649;
+  --shiki-token-attr-name: #4078f2;
+  --shiki-token-attr-value: #50a14f;
+  --shiki-token-attr-punctuation: #383a42;
+  --shiki-token-link: #4078f2;
+  --shiki-token-regexp: #50a14f;
+}
+
+[data-theme="one-dark"] {
+  --shiki-color-background: #282c34;
+  --shiki-color-text: #abb2bf;
+  --shiki-token-constant: #e5c07b;
+  --shiki-token-string: #98c379;
+  --shiki-token-comment: #5c6370;
+  --shiki-token-keyword: #c678dd;
+  --shiki-token-function: #61afef;
+  --shiki-token-number: #d19a66;
+  --shiki-token-operator: #56b6c2;
+  --shiki-token-punctuation: #abb2bf;
+  --shiki-token-property: #e06c75;
+  --shiki-token-tag: #e06c75;
+  --shiki-token-attr-name: #d19a66;
+  --shiki-token-attr-value: #98c379;
+  --shiki-token-attr-punctuation: #abb2bf;
+  --shiki-token-link: #61afef;
+  --shiki-token-regexp: #98c379;
+}
+
+[data-theme="dracula"] {
+  --shiki-color-background: #282a36;
+  --shiki-color-text: #f8f8f2;
+  --shiki-token-constant: #bd93f9;
+  --shiki-token-string: #f1fa8c;
+  --shiki-token-comment: #6272a4;
+  --shiki-token-keyword: #ff79c6;
+  --shiki-token-function: #50fa7b;
+  --shiki-token-number: #bd93f9;
+  --shiki-token-operator: #ff79c6;
+  --shiki-token-punctuation: #f8f8f2;
+  --shiki-token-property: #66d9ef;
+  --shiki-token-tag: #ff79c6;
+  --shiki-token-attr-name: #50fa7b;
+  --shiki-token-attr-value: #f1fa8c;
+  --shiki-token-attr-punctuation: #f8f8f2;
+  --shiki-token-link: #8be9fd;
+  --shiki-token-regexp: #f1fa8c;
+}
+
+[data-theme="nord"] {
+  --shiki-color-background: #2e3440;
+  --shiki-color-text: #d8dee9;
+  --shiki-token-constant: #8fbcbb;
+  --shiki-token-string: #a3be8c;
+  --shiki-token-comment: #616e88;
+  --shiki-token-keyword: #81a1c1;
+  --shiki-token-function: #88c0d0;
+  --shiki-token-number: #b48ead;
+  --shiki-token-operator: #81a1c1;
+  --shiki-token-punctuation: #d8dee9;
+  --shiki-token-property: #8fbcbb;
+  --shiki-token-tag: #bf616a;
+  --shiki-token-attr-name: #8fbcbb;
+  --shiki-token-attr-value: #a3be8c;
+  --shiki-token-attr-punctuation: #d8dee9;
+  --shiki-token-link: #88c0d0;
+  --shiki-token-regexp: #a3be8c;
+}
+
+.code-block-wrapper {
+  background-color: var(--shiki-color-background) !important;
+
+  pre {
+    background-color: transparent !important;
+    color: var(--shiki-color-text) !important;
+    border-radius: 0 !important;
+    padding: 20px !important;
+    overflow-x: auto !important;
+    margin: 0 !important;
+    border: none !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+  }
+
+  pre code {
+    background-color: transparent !important;
+    color: inherit !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+    line-height: inherit !important;
+  }
+
+  .token.constant {
+    color: var(--shiki-token-constant) !important;
+  }
+
+  .token.string {
+    color: var(--shiki-token-string) !important;
+  }
+
+  .token.comment {
+    color: var(--shiki-token-comment) !important;
+  }
+
+  .token.keyword {
+    color: var(--shiki-token-keyword) !important;
+  }
+
+  .token.function {
+    color: var(--shiki-token-function) !important;
+  }
+
+  .token.number {
+    color: var(--shiki-token-number) !important;
+  }
+
+  .token.operator {
+    color: var(--shiki-token-operator) !important;
+  }
+
+  .token.punctuation {
+    color: var(--shiki-token-punctuation) !important;
+  }
+
+  .token.property {
+    color: var(--shiki-token-property) !important;
+  }
+
+  .token.tag {
+    color: var(--shiki-token-tag) !important;
+  }
+
+  .token.attr-name {
+    color: var(--shiki-token-attr-name) !important;
+  }
+
+  .token.attr-value {
+    color: var(--shiki-token-attr-value) !important;
+  }
+
+  .token.attr-punctuation {
+    color: var(--shiki-token-attr-punctuation) !important;
+  }
+
+  .token.link {
+    color: var(--shiki-token-link) !important;
+  }
+
+  .token.regexp {
+    color: var(--shiki-token-regexp) !important;
+  }
+}

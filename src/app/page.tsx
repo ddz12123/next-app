@@ -72,8 +72,10 @@ export default function HomePage() {
   ];
 
   return (
-    <>
-      <AppHeader />
+    <div className="position-relative">
+      <Affix offsetTop={0}>
+        <AppHeader />
+      </Affix>
       <div className={clsx(styles.container, "flex flex-col")}>
         <section className={styles.heroSection}>
           <motion.div
@@ -360,6 +362,6 @@ export default function HomePage() {
         </section>
       </div>
       <AppFooter />
-    </>
+    </div>
   );
 }
