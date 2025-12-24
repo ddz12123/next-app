@@ -28,9 +28,7 @@ export default function NotFound() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
-          4
-          <span className={styles.zero}>0</span>
-          4
+          4<span className={styles.zero}>0</span>4
         </motion.div>
         <motion.div
           className={styles.message}

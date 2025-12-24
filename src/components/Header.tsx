@@ -105,13 +105,13 @@ export default function AppHeader() {
   ];
 
   const itemClick = (path: string) => {
-    console.log("Navigating to:", path);
+    //console.log("Navigating to:", path);
     router.push(path);
   };
 
   const isActive = (path: string) => {
     const active = pathname === path;
-    console.log(`Checking ${path} vs ${pathname}: ${active}`);
+    //console.log(`Checking ${path} vs ${pathname}: ${active}`);
     return active;
   };
 
@@ -142,9 +142,6 @@ export default function AppHeader() {
             <Space size={4}>
               {navItems.map((item) => {
                 const active = isActive(item.path);
-                console.log(
-                  `Item ${item.key} active: ${active}, path: ${item.path}`
-                );
                 return (
                   <Button
                     key={item.key}

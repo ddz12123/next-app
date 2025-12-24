@@ -24,6 +24,8 @@ type FieldType = {
   captcha?: string;
 };
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 export default function LoginPage() {
   const [captcha, setCaptcha] = useState("");
   const [captchaId, setCaptchaId] = useState("");
@@ -67,13 +69,13 @@ export default function LoginPage() {
     <div
       className={clsx(
         "flex flex-col justify-center items-center",
-        styles.loginContainer,
+        styles.loginContainer
       )}
     >
       <div className={clsx(styles.loginBox, "flex", "flex-col")}>
         <div className={clsx(styles.leftSection)}>
           <Image
-            src="/images/login/login-box-img.png"
+            src={`${basePath}/next-public/images/login/login-box-img.png`}
             alt="logo"
             width="360px"
             preview={false}

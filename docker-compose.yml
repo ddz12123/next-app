@@ -1,0 +1,10 @@
+services:
+  nextjs:
+    build: .
+    container_name: nextjs_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - /home/app/next-app:/home/app/next-app
+    working_dir: /home/app/next-app

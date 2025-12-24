@@ -7,6 +7,7 @@ import { TOKEN_KEY } from "@/utils/storage";
 const protectedRoutes = ["/dashboard", "/profile", "/settings"];
 
 export function proxy(request: NextRequest) {
+
   // 1. 获取 Token（从 Cookie）
   const token = request.cookies.get(TOKEN_KEY)?.value;
 

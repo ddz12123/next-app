@@ -4,12 +4,13 @@
 
   .loginBox {
     width: 900px;
-    min-width: 700PX;
+    min-width: 700px;
     height: 560px;
-    min-height: 400PX;
+    min-height: 400px;
     box-sizing: border-box;
     border-radius: 20px;
-    background: url("/images/login/login-bg.png") no-repeat center center;
+    background: url("/hub/next-public/images/login/login-bg.png") no-repeat
+      center center;
     background-size: cover;
     box-shadow:
       0 8px 24px rgba(0, 0, 0, 0.05),
