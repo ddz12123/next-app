@@ -1,8 +1,6 @@
-import { getNoteBySlug, getAllNotes } from "@/lib/mdx";
+import { getNoteBySlug } from "@/lib/mdx";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import {
-  ArrowLeftOutlined,
   CalendarOutlined,
   TagsOutlined,
   ClockCircleOutlined,
@@ -16,24 +14,17 @@ import rehypePrettyCode, {
   CharsElement,
 } from "rehype-pretty-code";
 import rehypeCopyCode from "@/lib/rehype-copy-code";
-import ThemeToggle from "./ThemeToggle";
-import CopyButtonHandler from "./CopyButtonHandler";
-import LeftSidebar from "./LeftSidebar";
-import RightSidebar from "./RightSidebar";
-import MDXContent from "./MDXContent";
+import ThemeToggle from "./components/ThemeToggle";
+import CopyButtonHandler from "./components/CopyButtonHandler";
+import LeftSidebar from "./components/LeftSidebar";
+import RightSidebar from "./components/RightSidebar";
+import MDXContent from "./components/MDXContent";
 import styles from "./noteDetail.module.scss";
 import "./code-themes.css";
 import { DEFAULT_THEME } from "@/config/theme";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-}
-
-export async function generateStaticParams() {
-  const notes = await getAllNotes();
-  return notes.map((note) => ({
-    slug: note.slug,
-  }));
 }
 
 export default async function NotePage({ params }: PageProps) {

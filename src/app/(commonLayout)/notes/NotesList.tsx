@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
-import { Input, Select, Pagination, Empty, ConfigProvider, Space } from "antd";
+import { Input, Select, Pagination, ConfigProvider, Space, Spin } from "antd";
 import {
   SearchOutlined,
   FileTextOutlined,
@@ -10,9 +10,9 @@ import {
   ArrowRightOutlined,
   TagsOutlined,
   FolderOutlined,
-  AppstoreOutlined,
 } from "@ant-design/icons";
 import styles from "./notes.module.scss";
+import { getAllNotes } from "@/lib/mdx";
 
 const { Search } = Input;
 
@@ -26,15 +26,35 @@ interface Note {
 }
 
 interface NotesListProps {
-  notes: Note[];
+  initialNotes?: Note[];
 }
 
-export default function NotesList({ notes }: NotesListProps) {
+export default function NotesList({ initialNotes }: NotesListProps) {
+  const [notes, setNotes] = useState<Note[]>(initialNotes || []);
+  const [loading, setLoading] = useState(!initialNotes);
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [selectedTag, setSelectedTag] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 9;
+
+  useEffect(() => {
+    if (!initialNotes) {
+      fetchNotes();
+    }
+  }, [initialNotes]);
+
+  const fetchNotes = async () => {
+    try {
+      setLoading(true);
+      const data = await getAllNotes();
+      setNotes(data);
+    } catch (error) {
+      console.error("Failed to fetch notes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const allCategories = useMemo(() => {
     const categories = new Set<string>();
@@ -206,7 +226,14 @@ export default function NotesList({ notes }: NotesListProps) {
 
           <main className={styles.mainContent}>
             <div className={styles.cardGrid}>
-              {paginatedNotes.length === 0 ? (
+              {loading ? (
+                <div className={styles.empty}>
+                  <div className={styles.emptyIcon}>
+                    <Spin size="large" />
+                  </div>
+                  <div className={styles.emptyTitle}>加载中...</div>
+                </div>
+              ) : paginatedNotes.length === 0 ? (
                 <div className={styles.empty}>
                   <div className={styles.emptyIcon}>
                     <FileTextOutlined

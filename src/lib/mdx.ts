@@ -1,9 +1,3 @@
-import fs from 'fs';
-import path from 'path';
-import matter from 'gray-matter';
-
-const NOTES_PATH = path.join(process.cwd(), 'src/app/(commonLayout)/notes/content');
-
 export interface NoteFrontmatter {
   title: string;
   date: string;
@@ -21,52 +15,59 @@ export interface Note {
 
 export interface NoteListItem extends NoteFrontmatter {
   slug: string;
+  url: string;
 }
 
+const mockNotes: NoteListItem[] = [
+  {
+    slug: "hello-world",
+    title: "Hello World",
+    date: "2024-12-24",
+    description: "这是我的第一篇笔记",
+    tags: ["示例", "入门"],
+    category: "技术",
+    url: "http://47.119.182.242/hello-world.md",
+  },
+  {
+    slug: "docker-guide",
+    title: "docker开发指南",
+    date: "2024-12-23",
+    description: "深入了解 docker的核心概念和最佳实践",
+    tags: ["Next.js", "docker", "前端"],
+    category: "技术",
+    url: "http://47.119.182.242/docker.md",
+  },
+];
+
 export async function getAllNotes(): Promise<NoteListItem[]> {
-  if (!fs.existsSync(NOTES_PATH)) {
-    return [];
-  }
-
-  const files = fs.readdirSync(NOTES_PATH);
-
-  const notes = files
-    .filter((file) => file.endsWith('.md') || file.endsWith('.mdx'))
-    .map((file) => {
-      const filePath = path.join(NOTES_PATH, file);
-      const fileContent = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(fileContent);
-
-      return {
-        ...data,
-        slug: file.replace(/\.mdx?$/, ''),
-      } as NoteFrontmatter & { slug: string };
-    })
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-
-  return notes;
+  return mockNotes;
 }
 
 export async function getNoteBySlug(slug: string): Promise<Note | null> {
-  const decodedSlug = decodeURIComponent(slug);
-  const mdPath = path.join(NOTES_PATH, `${decodedSlug}.md`);
-  const mdxPath = path.join(NOTES_PATH, `${decodedSlug}.mdx`);
-  
-  let filePath = '';
-  if (fs.existsSync(mdPath)) {
-    filePath = mdPath;
-  } else if (fs.existsSync(mdxPath)) {
-    filePath = mdxPath;
-  } else {
+  const note = mockNotes.find((n) => n.slug === slug);
+  if (!note) {
     return null;
   }
 
-  const fileContent = fs.readFileSync(filePath, 'utf8');
-  const { data, content } = matter(fileContent);
+  let content = "";
+  try {
+    const response = await fetch(note.url);
+    if (response.ok) {
+      content = await response.text();
+    }
+  } catch (error) {
+    console.error("Failed to fetch markdown content:", error);
+  }
 
   return {
-    slug: decodedSlug,
+    slug: note.slug,
     content,
-    frontmatter: data as NoteFrontmatter,
+    frontmatter: {
+      title: note.title,
+      date: note.date,
+      description: note.description,
+      tags: note.tags,
+      category: note.category,
+    },
   };
 }

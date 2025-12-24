@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import styles from "./noteDetail.module.scss";
+import styles from "./index.module.scss";
 
 export default function LeftSidebar() {
   return (

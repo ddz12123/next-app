@@ -1,4 +1,4 @@
-import { getAllNotes, NoteListItem } from "@/lib/mdx";
+import { getAllNotes } from "@/lib/mdx";
 import NotesList from "./NotesList";
 
 export const metadata = {
@@ -8,6 +8,5 @@ export const metadata = {
 
 export default async function NotesPage() {
   const notes = await getAllNotes();
-
-  return <NotesList notes={notes} />;
+  return <NotesList initialNotes={notes} />;
 }

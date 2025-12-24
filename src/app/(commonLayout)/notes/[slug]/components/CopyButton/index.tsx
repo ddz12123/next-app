@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { CopyOutlined, CheckOutlined } from "@ant-design/icons";
-import styles from "./CopyButton.module.scss";
+import styles from "./index.module.scss";
 
 interface CopyButtonProps {
   code: string;

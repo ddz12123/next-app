@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { MenuOutlined } from "@ant-design/icons";
-import styles from "./noteDetail.module.scss";
+import styles from "./index.module.scss";
 
 interface Heading {
   id: string;

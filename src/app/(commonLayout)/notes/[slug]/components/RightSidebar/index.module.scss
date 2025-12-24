@@ -1,0 +1,149 @@
+.rightSidebar {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  width: 220px;
+  box-sizing: border-box;
+  min-height: 400px;
+  max-height: 700px;
+  overflow-y: auto;
+
+  :global(.dark) & {
+    background: rgba(30, 41, 59, 0.5);
+    border-color: rgba(71, 85, 105, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .sidebarContent {
+    width: auto;
+    height: auto;
+  }
+}
+
+.sidebarContent {
+  width: auto;
+  height: auto;
+}
+
+.sidebarTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  :global(.dark) & {
+    color: #cbd5e1;
+  }
+}
+
+.sidebarTitleIcon {
+  font-size: 16px;
+  color: #3b82f6;
+
+  :global(.dark) & {
+    color: #60a5fa;
+  }
+}
+
+.tocNav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: calc(100vh - 150px);
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(59, 130, 246, 0.3);
+    border-radius: 2px;
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.5);
+    }
+  }
+}
+
+.tocItem {
+  display: block;
+  padding: 8px 12px;
+  color: #64748b;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+  }
+
+  &.active {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3b82f6;
+    font-weight: 600;
+  }
+
+  &.level2 {
+    padding-left: 20px;
+  }
+
+  &.level3 {
+    padding-left: 32px;
+    font-size: 12px;
+  }
+
+  &.level4 {
+    padding-left: 44px;
+    font-size: 12px;
+  }
+
+  &.level5,
+  &.level6 {
+    padding-left: 56px;
+    font-size: 12px;
+  }
+
+  :global(.dark) & {
+    color: #94a3b8;
+
+    &:hover {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+    }
+
+    &.active {
+      background: rgba(59, 130, 246, 0.25);
+      color: #60a5fa;
+    }
+  }
+}
+
+.tocEmpty {
+  color: #94a3b8;
+  font-size: 13px;
+  text-align: center;
+  padding: 20px 0;
+
+  :global(.dark) & {
+    color: #64748b;
+  }
+}

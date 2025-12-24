@@ -3,7 +3,7 @@
 import { useMarkdownStore } from "@/store/markdownStore";
 import { useEffect, useState } from "react";
 import { BgColorsOutlined } from "@ant-design/icons";
-import styles from "./noteDetail.module.scss";
+import styles from "./index.module.scss";
 import { THEMES, THEME_LABELS, type MarkdownTheme } from "@/config/theme";
 
 const themeOptions: { value: MarkdownTheme; label: string }[] = THEMES.map(
