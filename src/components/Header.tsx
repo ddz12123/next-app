@@ -8,9 +8,11 @@ import {
   Layout,
   Drawer,
   Divider,
+  Avatar,
+  message,
 } from "antd";
 import {
-  FolderOpenOutlined,
+  PictureOutlined,
   FileTextOutlined,
   EditOutlined,
   RobotOutlined,
@@ -19,12 +21,15 @@ import {
   HomeOutlined,
   AppstoreOutlined,
   SettingOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import styles from "./Header.module.scss";
 import clsx from "clsx";
 import type { MenuProps } from "antd";
 import { useAppStore } from "@/store/appStore";
+import { useUserStore } from "@/store/userStore";
 import { useRouter, usePathname } from "next/navigation";
+import { getToken } from "@/utils/storage";
 
 const { Text } = Typography;
 const { Header } = Layout;
@@ -44,9 +49,9 @@ export default function AppHeader() {
     },
     {
       key: "files",
-      label: "文件中心",
-      icon: <FolderOpenOutlined />,
-      path: "/files",
+      label: "图库",
+      icon: <PictureOutlined />,
+      path: "/images",
     },
     {
       key: "notes",
@@ -54,15 +59,14 @@ export default function AppHeader() {
       icon: <FileTextOutlined />,
       path: "/notes",
     },
-    { key: "blog", label: "写博客", icon: <EditOutlined />, path: "/blog" },
+    { key: "blog", label: "博客中心", icon: <EditOutlined />, path: "/blog" },
   ]);
   const [moreAppsItems, setMoreAppsItems] = useState<MenuProps["items"]>([
-    { key: "calendar", label: "日历" },
-    { key: "tasks", label: "任务管理" },
-    { key: "mindmap", label: "思维导图" },
     { key: "whiteboard", label: "白板" },
+    { key: "ittools", label: "IT Tools" },
   ]);
   const { appName } = useAppStore();
+  const { userInfo, isLogin, fetchUserInfo, logout, checkLoginStatus } = useUserStore();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -74,19 +78,25 @@ export default function AppHeader() {
   }, []);
 
   useEffect(() => {
-    // TODO: 从接口获取导航数据
-    // const fetchNavData = async () => {
-    //   const res = await fetch('/api/nav');
-    //   const data = await res.json();
-    //   setNavItems(data.navItems);
-    //   setMoreAppsItems(data.moreAppsItems);
-    // };
-    // fetchNavData();
-  }, []);
+    // 检查登录状态并同步用户信息
+    checkLoginStatus();
+  }, [checkLoginStatus, pathname]); // 路径变化时也检查一下，确保状态同步
 
   useEffect(() => {
     setActivePath(pathname);
   }, [pathname]);
+
+  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
+    if (key === 'profile') {
+      router.push('/user-center');
+    } else if (key === 'logout') {
+      logout();
+      message.success('已退出登录');
+      router.push('/login');
+    }else if (key === 'settings') {
+      router.push('/settings');
+    }
+  };
 
   const userMenuItems: MenuProps["items"] = [
     {
@@ -104,10 +114,19 @@ export default function AppHeader() {
     },
     {
       key: "logout",
+      icon: <LogoutOutlined />,
       label: "退出登录",
       danger: true,
     },
   ];
+
+  const handleMoreAppsClick = ({ key }: { key: string }) => {
+    if (key === "ittools") {
+      window.open("http://47.119.182.242:8001", "_blank");
+    } else if (key === "whiteboard") {
+      window.open("http://47.119.182.242:8002", "_blank");
+    }
+  };
 
   const onLogin = () => {
     router.push("/login");
@@ -135,6 +154,9 @@ export default function AppHeader() {
           <div className={styles.navSection}>
             <Space size={4}>
               {navItems.map((item) => {
+                const isActive =
+                  activePath === item.path ||
+                  (item.path === "/notes" && activePath?.startsWith("/notes"));
                 return (
                   <Button
                     key={item.key}
@@ -142,7 +164,7 @@ export default function AppHeader() {
                     type="text"
                     className={clsx(
                       styles.navLink,
-                      activePath === item.path && styles.navLinkActive
+                      isActive && styles.navLinkActive
                     )}
                     icon={item.icon}
                     onClick={() => router.push(item.path)}
@@ -152,7 +174,7 @@ export default function AppHeader() {
                 );
               })}
               <Dropdown
-                menu={{ items: moreAppsItems }}
+                menu={{ items: moreAppsItems, onClick: handleMoreAppsClick }}
                 placement="bottomLeft"
                 trigger={["click"]}
               >
@@ -167,20 +189,41 @@ export default function AppHeader() {
             </Space>
           </div>
           <div className={styles.authSection}>
-            <Button
-              type="text"
-              className={styles.loginButton}
-              onClick={onLogin}
-            >
-              登录
-            </Button>
-            <Button
-              type="primary"
-              className={styles.registerButton}
-              onClick={onRegister}
-            >
-              注册
-            </Button>
+            {isLogin ? (
+              <Dropdown
+                menu={{ items: userMenuItems, onClick: handleUserMenuClick }}
+                placement="bottomRight"
+                arrow
+              >
+                <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }}>
+                   <Avatar 
+                     src={userInfo?.avatar || undefined} 
+                     icon={!userInfo?.avatar && <UserOutlined />}
+                     style={{ backgroundColor: userInfo?.avatar ? 'transparent' : '#1890ff' }}
+                   />
+                   <Text strong style={{ color: isScrolled ? 'rgba(0,0,0,0.85)' : 'rgba(0,0,0,0.85)' }}>
+                      {userInfo?.nickname || userInfo?.username || 'User'}
+                   </Text>
+                </div>
+              </Dropdown>
+            ) : (
+              <>
+                <Button
+                  type="text"
+                  className={styles.loginButton}
+                  onClick={onLogin}
+                >
+                  登录
+                </Button>
+                <Button
+                  type="primary"
+                  className={styles.registerButton}
+                  onClick={onRegister}
+                >
+                  注册
+                </Button>
+              </>
+            )}
             <Button
               type="text"
               className={clsx(styles.mobileMenuButton)}
@@ -198,17 +241,40 @@ export default function AppHeader() {
         className={styles.mobileDrawer}
       >
         <div className={styles.mobileNavContent}>
-          {navItems.map((item) => (
-            <Button
-              key={item.key}
-              type="text"
-              className={styles.mobileNavLink}
-              icon={item.icon}
-              block
-            >
-              {item.label}
-            </Button>
-          ))}
+          {isLogin && (
+             <div style={{ marginBottom: 16, padding: '0 12px', display: 'flex', alignItems: 'center', gap: 12 }}>
+                <Avatar 
+                    size="large"
+                    src={userInfo?.avatar || undefined} 
+                    icon={!userInfo?.avatar && <UserOutlined />}
+                    style={{ backgroundColor: userInfo?.avatar ? 'transparent' : '#1890ff' }}
+                />
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Text strong>{userInfo?.nickname || userInfo?.username}</Text>
+                    <Text type="secondary" style={{ fontSize: 12 }}>{userInfo?.email}</Text>
+                </div>
+             </div>
+          )}
+          {navItems.map((item) => {
+            const isActive =
+              activePath === item.path ||
+              (item.path === "/notes" && activePath?.startsWith("/notes"));
+            return (
+              <Button
+                key={item.key}
+                type="text"
+                className={clsx(
+                  styles.mobileNavLink,
+                  isActive && styles.mobileNavLinkActive
+                )}
+                icon={item.icon}
+                block
+                onClick={() => router.push(item.path)}
+              >
+                {item.label}
+              </Button>
+            );
+          })}
           <Divider />
           <Text className={styles.drawerSectionTitle}>更多应用</Text>
           {moreAppsItems?.map((item: any) => (
@@ -217,10 +283,42 @@ export default function AppHeader() {
               className={styles.mobileNavLink}
               block
               key={item.key}
+              onClick={() => handleMoreAppsClick({ key: item.key })}
             >
               {item.label}
             </Button>
           ))}
+           {isLogin && (
+            <>
+              <Divider />
+              <Button
+                type="text"
+                className={styles.mobileNavLink}
+                block
+                danger
+                icon={<LogoutOutlined />}
+                onClick={() => {
+                    logout();
+                    message.success('已退出登录');
+                    setMobileMenuOpen(false);
+                    router.push('/login');
+                }}
+              >
+                退出登录
+              </Button>
+            </>
+          )}
+          {!isLogin && (
+             <>
+                <Divider />
+                 <Button type="primary" block onClick={onLogin} style={{ marginBottom: 12 }}>
+                    登录
+                 </Button>
+                 <Button block onClick={onRegister}>
+                    注册
+                 </Button>
+             </>
+          )}
         </div>
       </Drawer>
     </>

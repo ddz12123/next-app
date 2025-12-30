@@ -1,0 +1,42 @@
+@use "../../../styles/variables" as v;
+
+.container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 24px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+.avatarWrapper {
+  position: relative;
+}
+
+.userInfo {
+  flex: 1;
+
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .roleTag {
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+}
+
+.detailCard {
+  margin-top: 24px;
+}

@@ -1,0 +1,88 @@
+.settingsContainer {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  color: #1e293b;
+
+  :global(.dark) & {
+    color: #f1f5f9;
+  }
+}
+
+.section {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+
+  :global(.dark) & {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.sectionTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #1e293b;
+
+  :global(.dark) & {
+    color: #f1f5f9;
+  }
+}
+
+.settingItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid #f1f5f9;
+
+    :global(.dark) & {
+      border-bottom-color: #334155;
+    }
+  }
+}
+
+.settingInfo {
+  flex: 1;
+}
+
+.settingLabel {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1e293b;
+  margin-bottom: 4px;
+
+  :global(.dark) & {
+    color: #f1f5f9;
+  }
+}
+
+.settingDesc {
+  font-size: 14px;
+  color: #64748b;
+
+  :global(.dark) & {
+    color: #94a3b8;
+  }
+}
+
+.settingControl {
+  margin-left: 24px;
+  min-width: 160px;
+}

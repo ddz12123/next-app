@@ -1,7 +1,5 @@
-export const metadata = {
-  title: "设置",
-};
+import SettingsContent from "./SettingsContent";
 
 export default function SettingsPage() {
-  return <div className="flex flex-col">settings page</div>;
+  return <SettingsContent />;
 }

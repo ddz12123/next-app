@@ -1,0 +1,34 @@
+@use "sass:map";
+
+// 变量定义
+$primary-color: #1890ff;
+$success-color: #52c41a;
+$text-primary: #1f2937;
+$text-secondary: #6b7280;
+$bg-color: #f9fafb;
+$card-bg: #ffffff;
+$border-radius: 12px;
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+// 混合宏：响应式断点
+$breakpoints: (
+  "sm": 640px,
+  "md": 768px,
+  "lg": 1024px,
+  "xl": 1280px
+);
+
+@mixin media-up($breakpoint) {
+  $width: map.get($breakpoints, $breakpoint);
+  @media (min-width: $width) {
+    @content;
+  }
+}
+
+@mixin media-down($breakpoint) {
+  $width: map.get($breakpoints, $breakpoint);
+  @media (max-width: #{$width - 1px}) { // 减1px避免断点重叠
+    @content;
+  }
+}

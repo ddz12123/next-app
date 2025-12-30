@@ -81,3 +81,9 @@
 .backButton:hover .backIcon {
   transform: translateX(-4px);
 }
+
+@media (max-width: 1024px) {
+  .leftSidebar {
+    display: none;
+  }
+}

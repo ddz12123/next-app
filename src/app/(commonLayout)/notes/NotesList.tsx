@@ -1,28 +1,40 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import Link from "next/link";
-import { Input, Select, Pagination, ConfigProvider, Space, Spin } from "antd";
+import { useRouter } from "next/navigation";
+import { Input, Select, Pagination, ConfigProvider, Space, Spin, Breadcrumb } from "antd";
 import {
   SearchOutlined,
   FileTextOutlined,
   CalendarOutlined,
   ArrowRightOutlined,
-  TagsOutlined,
   FolderOutlined,
+  FileTextOutlined as FileOutlined,
+  HomeOutlined,
+  AppstoreOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
+import { Button, Tooltip, Radio } from "antd";
 import styles from "./notes.module.scss";
-import { getAllNotes } from "@/lib/mdx";
+import {
+  getNoteDirApi,
+  getNoteFileListApi,
+} from "@/request/notes/note-api";
 
 const { Search } = Input;
 
 interface Note {
-  slug: string;
-  title: string;
-  description?: string;
-  date: string;
-  tags?: string[];
-  category?: string;
+  created: string;
+  modified: string;
+  name: string;
+  path: string;
+  size: number;
+  is_dir: boolean;
+}
+
+interface Directory {
+  modified: string;
+  name: string;
 }
 
 interface NotesListProps {
@@ -30,107 +42,126 @@ interface NotesListProps {
 }
 
 export default function NotesList({ initialNotes }: NotesListProps) {
+  const router = useRouter();
   const [notes, setNotes] = useState<Note[]>(initialNotes || []);
   const [loading, setLoading] = useState(!initialNotes);
   const [searchText, setSearchText] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedTag, setSelectedTag] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [currentSubPath, setCurrentSubPath] = useState<string[]>([]); // New state for subdirectories
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 9;
+  const [directories, setDirectories] = useState<Directory[]>([]);
+  const [total, setTotal] = useState(0);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const pageSize = 20;
 
-  useEffect(() => {
-    if (!initialNotes) {
-      fetchNotes();
+  const getDirList = async () => {
+    try {
+      const res = await getNoteDirApi();
+      if (res.code === 200 && res.data && res.data.length > 0) {
+        setDirectories(res.data);
+        // Only set default category if not already set (though logic below might override)
+        if (!selectedCategory) {
+            setSelectedCategory(res.data[0].name);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch directory list:", error);
     }
-  }, [initialNotes]);
+  };
 
+  // Fetch notes based on category and current subpath
   const fetchNotes = async () => {
+    if (!selectedCategory) return;
     try {
       setLoading(true);
-      const data = await getAllNotes();
-      setNotes(data);
+      // Construct path: base + category + subpath
+      const subPathString = currentSubPath.length > 0 ? `${currentSubPath.join("/")}/` : "";
+      const fullPath = `/opt/openlist/data/notes/笔记/${selectedCategory}/${subPathString}`;
+
+      const res = await getNoteFileListApi({
+        path: fullPath,
+        page: currentPage,
+        per_page: pageSize,
+      });
+      if (res.code === 200 && res.data) {
+        setNotes(res.data.content);
+        setTotal(res.data.total);
+      } else {
+        setNotes([]);
+        setTotal(0);
+      }
     } catch (error) {
-      console.error("Failed to fetch notes:", error);
+      console.error("Failed to fetch note list:", error);
+      setNotes([]);
     } finally {
       setLoading(false);
     }
   };
 
+  const getNoteTitle = (name: string | undefined): string => {
+    if (!name) return "未命名";
+    // If it's a directory, return name as is
+    // We don't have is_dir info here easily without passing the whole object or checking context, 
+    // but usually we call this with note.name. 
+    // Let's assume for now we might need to adjust logic if folders have extensions (unlikely).
+    // But safely:
+    const parts = name.split(".");
+    return parts.length > 1 ? parts.slice(0, -1).join(".") : name;
+  };
+
+  const formatFileSize = (bytes: number): string => {
+    if (bytes === 0) return "0 B";
+    const k = 1024;
+    const sizes = ["B", "KB", "MB", "GB"];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + " " + sizes[i];
+  };
+
+  useEffect(() => {
+    getDirList();
+  }, []);
+
+  useEffect(() => {
+    if (selectedCategory) {
+      fetchNotes();
+    }
+  }, [currentPage, selectedCategory, currentSubPath]);
+
   const allCategories = useMemo(() => {
-    const categories = new Set<string>();
-    notes.forEach((note) => {
-      if (note.category) {
-        categories.add(note.category);
-      }
-    });
-    return Array.from(categories).sort();
-  }, [notes]);
-
-  const allTags = useMemo(() => {
-    const tags = new Map<string, number>();
-    notes.forEach((note) => {
-      if (note.tags) {
-        note.tags.forEach((tag) => {
-          tags.set(tag, (tags.get(tag) || 0) + 1);
-        });
-      }
-    });
-    return Array.from(tags.entries())
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 20);
-  }, [notes]);
-
-  const categoryCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    notes.forEach((note) => {
-      if (note.category) {
-        counts.set(note.category, (counts.get(note.category) || 0) + 1);
-      }
-    });
-    return counts;
-  }, [notes]);
+    return directories.map((dir) => dir.name).sort();
+  }, [directories]);
 
   const filteredNotes = useMemo(() => {
     return notes.filter((note) => {
       const matchesSearch =
         searchText === "" ||
-        note.title.toLowerCase().includes(searchText.toLowerCase()) ||
-        (note.description &&
-          note.description.toLowerCase().includes(searchText.toLowerCase()));
+        note.name.toLowerCase().includes(searchText.toLowerCase());
 
-      const matchesCategory =
-        selectedCategory === "all" || note.category === selectedCategory;
-
-      const matchesTag =
-        selectedTag === "" || (note.tags && note.tags.includes(selectedTag));
-
-      return matchesSearch && matchesCategory && matchesTag;
+      // Note: note.path filtering is tricky if we are in a subdir.
+      // But fetchNotes already gets the correct list for the current directory.
+      // So we mainly just need to filter by search text.
+      // The previous logic filtered by selectedCategory in path, which is still valid but implicitly handled by API now.
+      
+      return matchesSearch;
     });
-  }, [notes, searchText, selectedCategory, selectedTag]);
+  }, [notes, searchText]);
 
-  const paginatedNotes = useMemo(() => {
-    const startIndex = (currentPage - 1) * pageSize;
-    return filteredNotes.slice(startIndex, startIndex + pageSize);
-  }, [filteredNotes, currentPage]);
+  const displayNotes = searchText ? filteredNotes : notes;
+  const displayTotal = searchText ? filteredNotes.length : total;
 
   const handleSearch = (value: string) => {
     setSearchText(value);
-    setCurrentPage(1);
+    if (value) {
+      setCurrentPage(1);
+    }
   };
 
   const handleCategoryChange = (value: string) => {
-    setSelectedCategory(value);
-    setSelectedTag("");
-    setCurrentPage(1);
-  };
-
-  const handleTagClick = (tag: string) => {
-    if (selectedTag === tag) {
-      setSelectedTag("");
-    } else {
-      setSelectedTag(tag);
+    if (value !== selectedCategory) {
+        setSelectedCategory(value);
+        setCurrentSubPath([]); // Reset subpath when category changes
+        setCurrentPage(1);
     }
-    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
@@ -138,11 +169,62 @@ export default function NotesList({ initialNotes }: NotesListProps) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleItemClick = (note: Note) => {
+    if (note.is_dir) {
+        // Enter directory
+        setCurrentSubPath([...currentSubPath, note.name]);
+        setCurrentPage(1);
+    } else {
+        // Open note
+        router.push(`/notes/details?path=${encodeURIComponent(note.path)}`);
+    }
+  };
+
+  const handleBreadcrumbClick = (index: number) => {
+      // index -1 means root (category)
+      // index 0 means first subfolder, etc.
+      if (index === -1) {
+          setCurrentSubPath([]);
+      } else {
+          setCurrentSubPath(currentSubPath.slice(0, index + 1));
+      }
+      setCurrentPage(1);
+  };
+
+  const breadcrumbItems = useMemo(() => {
+      const items = [
+          {
+              title: (
+                <span 
+                    onClick={() => handleBreadcrumbClick(-1)} 
+                    style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                    <HomeOutlined style={{ marginRight: 4 }} />
+                    {selectedCategory}
+                </span>
+              ),
+          }
+      ];
+
+      currentSubPath.forEach((path, index) => {
+          items.push({
+              title: (
+                <span 
+                    onClick={() => handleBreadcrumbClick(index)}
+                    style={{ cursor: 'pointer' }}
+                >
+                    {path}
+                </span>
+              ),
+          });
+      });
+      return items;
+  }, [selectedCategory, currentSubPath]);
+
+
   return (
     <div className={styles.notesContainer}>
-      <div
-        style={{ maxWidth: "1400px", margin: "0 auto", padding: "64px 20px" }}
-      >
+      <div className={styles.mainWrapper}>
         <header className={styles.header}>
           <h1 className={styles.title}>开发笔记</h1>
           <p className={styles.subtitle}>
@@ -151,16 +233,13 @@ export default function NotesList({ initialNotes }: NotesListProps) {
         </header>
 
         <div className={styles.searchSection}>
-          <Space.Compact style={{ width: "100%", maxWidth: "800px" }}>
+          <Space.Compact className={styles.searchCompact}>
             <Select
               value={selectedCategory}
               onChange={handleCategoryChange}
-              style={{ minWidth: 140 }}
+              className={styles.categorySelect}
               size="large"
-              options={[
-                { value: "all", label: "全部分类" },
-                ...allCategories.map((cat) => ({ value: cat, label: cat })),
-              ]}
+              options={allCategories.map((cat) => ({ value: cat, label: cat }))}
             />
             <Search
               placeholder="搜索笔记标题或内容..."
@@ -170,7 +249,7 @@ export default function NotesList({ initialNotes }: NotesListProps) {
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               onSearch={handleSearch}
-              style={{ flex: 1 }}
+              className={styles.searchInput}
             />
           </Space.Compact>
         </div>
@@ -183,146 +262,191 @@ export default function NotesList({ initialNotes }: NotesListProps) {
                 分类目录
               </div>
               <div className={styles.categoryList}>
-                <a
-                  className={`${styles.categoryItem} ${selectedCategory === "all" ? styles.active : ""}`}
-                  onClick={() => handleCategoryChange("all")}
-                >
-                  <span>全部</span>
-                  <span className={styles.count}>{notes.length}</span>
-                </a>
-                {allCategories.map((category) => (
+                {directories.map((dir) => (
                   <a
-                    key={category}
-                    className={`${styles.categoryItem} ${selectedCategory === category ? styles.active : ""}`}
-                    onClick={() => handleCategoryChange(category)}
+                    key={dir.name}
+                    className={`${styles.categoryItem} ${selectedCategory === dir.name ? styles.active : ""}`}
+                    onClick={() => handleCategoryChange(dir.name)}
                   >
-                    <span>{category}</span>
-                    <span className={styles.count}>
-                      {categoryCounts.get(category) || 0}
-                    </span>
+                    <span>{dir.name}</span>
                   </a>
-                ))}
-              </div>
-            </div>
-
-            <div className={styles.sidebarSection}>
-              <div className={styles.sidebarTitle}>
-                <TagsOutlined />
-                热门标签
-              </div>
-              <div className={styles.tagCloud}>
-                {allTags.map(([tag, count]) => (
-                  <span
-                    key={tag}
-                    className={`${styles.tagCloudItem} ${selectedTag === tag ? styles.active : ""}`}
-                    onClick={() => handleTagClick(tag)}
-                  >
-                    {tag} ({count})
-                  </span>
                 ))}
               </div>
             </div>
           </aside>
 
           <main className={styles.mainContent}>
-            <div className={styles.cardGrid}>
-              {loading ? (
-                <div className={styles.empty}>
-                  <div className={styles.emptyIcon}>
-                    <Spin size="large" />
-                  </div>
-                  <div className={styles.emptyTitle}>加载中...</div>
+            <div className={styles.contentCard}>
+              {/* Breadcrumb Navigation and View Mode Toggle */}
+              <div className={styles.breadcrumbWrapper}>
+                <div style={{ flex: 1 }}>
+                  <Breadcrumb items={breadcrumbItems} />
                 </div>
-              ) : paginatedNotes.length === 0 ? (
-                <div className={styles.empty}>
-                  <div className={styles.emptyIcon}>
-                    <FileTextOutlined
-                      style={{ fontSize: "48px", color: "#94a3b8" }}
-                    />
-                  </div>
-                  <div className={styles.emptyTitle}>暂无笔记</div>
-                  <div className={styles.emptyDescription}>
-                    {searchText !== "" ||
-                    selectedCategory !== "all" ||
-                    selectedTag !== ""
-                      ? "没有找到匹配的笔记，试试其他关键词或筛选条件"
-                      : "精彩内容正在准备中，敬请期待..."}
-                  </div>
-                </div>
-              ) : (
-                paginatedNotes.map((note) => (
-                  <Link
-                    key={note.slug}
-                    href={`/notes/${note.slug}`}
-                    className={styles.noteCard}
-                  >
-                    <div className={styles.glow} />
-                    <div className={styles.cardContent}>
-                      <div className={styles.cardHeader}>
-                        <h2 className={styles.cardTitle}>{note.title}</h2>
-                      </div>
+                <Radio.Group 
+                  value={viewMode} 
+                  onChange={(e) => setViewMode(e.target.value)}
+                  size="small"
+                  buttonStyle="solid"
+                >
+                  <Tooltip title="网格模式">
+                    <Radio.Button value="grid">
+                      <AppstoreOutlined />
+                    </Radio.Button>
+                  </Tooltip>
+                  <Tooltip title="列表模式">
+                    <Radio.Button value="list">
+                      <UnorderedListOutlined />
+                    </Radio.Button>
+                  </Tooltip>
+                </Radio.Group>
+              </div>
 
-                      {note.description && (
-                        <p className={styles.cardDescription}>
-                          {note.description}
-                        </p>
-                      )}
-
-                      <div className={styles.cardMeta}>
-                        <span className={styles.date}>
-                          <CalendarOutlined />
-                          {new Date(note.date).toLocaleDateString("zh-CN", {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          })}
-                        </span>
-                        <span className={styles.readMore}>
-                          阅读更多 <ArrowRightOutlined />
-                        </span>
-                      </div>
-
-                      {note.tags && note.tags.length > 0 && (
-                        <div className={styles.tags}>
-                          {note.tags.slice(0, 3).map((tag) => (
-                            <span key={tag} className={styles.tag}>
-                              {tag}
-                            </span>
-                          ))}
-                          {note.tags.length > 3 && (
-                            <span className={styles.moreTags}>
-                              +{note.tags.length - 3}
-                            </span>
-                          )}
-                        </div>
-                      )}
+              <div className={styles.scrollArea}>
+                {loading ? (
+                  <div className={styles.empty}>
+                    <div className={styles.emptyIcon}>
+                      <Spin size="large" />
                     </div>
-                  </Link>
-                ))
-              )}
-            </div>
+                    <div className={styles.emptyTitle}>加载中...</div>
+                  </div>
+                ) : displayNotes.length === 0 ? (
+                  <div className={styles.empty}>
+                    <div className={styles.emptyIcon}>
+                      <FileTextOutlined
+                        style={{ fontSize: "48px", color: "#94a3b8" }}
+                      />
+                    </div>
+                    <div className={styles.emptyTitle}>暂无内容</div>
+                    <div className={styles.emptyDescription}>
+                      {searchText !== ""
+                        ? "没有找到匹配的内容，试试其他关键词或筛选条件"
+                        : "该目录下暂无内容"}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {/* 目录内容渲染 */}
+                    {displayNotes.some((n) => n.is_dir) && (
+                      <div className={`${viewMode === "grid" ? styles.cardGrid : styles.folderListSection} ${viewMode === "grid" ? styles.folderGrid : ""}`}>
+                        {displayNotes
+                          .filter((n) => n.is_dir)
+                          .map((note, index) => (
+                            <div
+                              key={`folder-${index}`}
+                              className={viewMode === "grid" ? styles.noteCard : styles.folderItem}
+                              onClick={() => handleItemClick(note)}
+                            >
+                              {viewMode === "grid" ? (
+                                <>
+                                  <div className={styles.cardMain}>
+                                    <div className={styles.cardHeader}>
+                                      <div className={`${styles.cardIcon} ${styles.folderIcon}`}>
+                                        <FolderOutlined />
+                                      </div>
+                                      <h3 className={styles.cardTitle}>{note.name}</h3>
+                                    </div>
+                                    <div className={styles.cardMeta}>
+                                      <span className={styles.metaItem}>
+                                        <CalendarOutlined />
+                                        {new Date(note.modified).toLocaleDateString("zh-CN")}
+                                      </span>
+                                      <span className={styles.tag}>Directory</span>
+                                    </div>
+                                  </div>
+                                  <div className={styles.cardAction}>
+                                    <span>进入目录</span>
+                                    <ArrowRightOutlined />
+                                  </div>
+                                </>
+                              ) : (
+                                <>
+                                  <div className={styles.folderIcon}>
+                                    <FolderOutlined />
+                                  </div>
+                                  <span className={styles.folderName}>{note.name}</span>
+                                  <span className={styles.folderMeta}>
+                                    {new Date(note.modified).toLocaleDateString("zh-CN")}
+                                  </span>
+                                  <ArrowRightOutlined className={styles.folderArrow} />
+                                </>
+                              )}
+                            </div>
+                          ))}
+                      </div>
+                    )}
 
-            {filteredNotes.length > pageSize && (
-              <ConfigProvider
-                theme={{
-                  token: {
-                    colorPrimary: "#3b82f6",
-                  },
-                }}
-              >
-                <div className={styles.pagination}>
+                    {/* 文章内容渲染 */}
+                    {displayNotes.some((n) => !n.is_dir) && (
+                      <div className={`${styles.cardGrid} ${viewMode === "list" ? styles.listView : ""}`}>
+                        {displayNotes
+                          .filter((n) => !n.is_dir)
+                          .map((note, index) => (
+                            <div
+                              key={`note-${index}`}
+                              className={styles.noteCard}
+                              onClick={() => handleItemClick(note)}
+                            >
+                              <div className={styles.cardMain}>
+                                <div className={styles.cardHeader}>
+                                  <div className={styles.cardIcon}>
+                                    <FileTextOutlined />
+                                  </div>
+                                  <h3 className={styles.cardTitle}>
+                                    {getNoteTitle(note.name)}
+                                  </h3>
+                                </div>
+                                <div className={styles.cardMeta}>
+                                  <span className={styles.metaItem}>
+                                    <CalendarOutlined />
+                                    {new Date(note.modified).toLocaleDateString(
+                                      "zh-CN",
+                                      viewMode === "grid" 
+                                        ? { year: "numeric", month: "long", day: "numeric" }
+                                        : { year: "numeric", month: "2-digit", day: "2-digit" }
+                                    )}
+                                  </span>
+                                  <span className={styles.metaItem}>
+                                    <FileOutlined />
+                                    {formatFileSize(note.size)}
+                                  </span>
+                                  {viewMode === 'grid' && <span className={styles.tag}>Local</span>}
+                                </div>
+                              </div>
+                              <div className={styles.cardAction}>
+                                <span>查看详情</span>
+                                <ArrowRightOutlined />
+                              </div>
+                            </div>
+                          ))}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+
+              <div className={styles.paginationWrapper}>
+                <div style={{ color: "#64748b", fontSize: "14px" }}>
+                  共 <span style={{ color: "#3b82f6", fontWeight: 600 }}>{displayTotal}</span> 项内容
+                </div>
+                <ConfigProvider
+                  theme={{
+                    token: {
+                      colorPrimary: "#3b82f6",
+                    },
+                  }}
+                >
                   <Pagination
                     current={currentPage}
-                    total={filteredNotes.length}
+                    total={displayTotal}
                     pageSize={pageSize}
                     onChange={handlePageChange}
                     showSizeChanger={false}
                     showQuickJumper
-                    showTotal={(total) => `共 ${total} 篇`}
+                    size="small"
                   />
-                </div>
-              </ConfigProvider>
-            )}
+                </ConfigProvider>
+              </div>
+            </div>
           </main>
         </div>
       </div>

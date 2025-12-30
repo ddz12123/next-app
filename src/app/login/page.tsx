@@ -52,14 +52,18 @@ export default function LoginPage() {
     };
     loginApi(params as LoginData).then(async (res) => {
       if (res.code == 200) {
+        // 直接调用 setToken，它现在内部会设置 Cookie
         setToken(res.data.token);
-        await fetch("/api/set-token", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token: res.data.token }),
-        });
+        
         router.push("/");
+        router.refresh(); // 强制刷新路由，让 Middleware 重新检查状态
+      }else{
+        // 重新获取验证码
+        getCaptchaHandler();
       }
+    }).catch(()=>{
+      // 重新获取验证码
+      getCaptchaHandler();
     });
   };
 

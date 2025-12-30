@@ -2,34 +2,37 @@
 export const TOKEN_KEY = "auth_token";
 
 /**
- * 存储 Token 到 localStorage（仅客户端）
+ * 存储 Token（仅使用 Cookie，支持 SSR）
  * @param token 要存储的 Token 字符串
  */
 export const setToken = (token: string) => {
   if (isClient) {
-    localStorage.setItem(TOKEN_KEY, token);
+    // 设置 Cookie，path=/ 确保全站可用，SameSite=Lax 是现代浏览器推荐的默认值
+    // 这里使用 document.cookie 可以在客户端直接设置，而不需要通过 API 路由中转
+    document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
   }
 };
 
 /**
- * 从 localStorage 获取 Token（仅客户端）
+ * 获取 Token
  * @returns Token 字符串 | null
  */
 export const getToken = (): string | null => {
   if (isClient) {
-    return localStorage.getItem(TOKEN_KEY);
+    const match = document.cookie.match(new RegExp('(^| )' + TOKEN_KEY + '=([^;]+)'));
+    if (match) return match[2];
   }
   return null;
 };
 
 /**
- * 清除 localStorage 中的 Token（仅客户端）
+ * 清除 Token
  */
 export const removeToken = () => {
   if (isClient) {
-    localStorage.removeItem(TOKEN_KEY);
+    document.cookie = `${TOKEN_KEY}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
   }
 };
 
-// 客户端环境判断（复用）
+// 客户端环境判断
 export const isClient = typeof window !== "undefined";

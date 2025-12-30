@@ -14,7 +14,7 @@ import {
 import {
   FileTextOutlined,
   EditOutlined,
-  FolderOpenOutlined,
+  PictureOutlined,
   RobotOutlined,
   ThunderboltOutlined,
   SafetyOutlined,
@@ -26,30 +26,36 @@ import styles from "./home.module.scss";
 import AppHeader from "@/components/Header";
 import AppFooter from "@/components/Footer";
 import { useAppStore } from "@/store/appStore";
+import { useRouter } from "next/navigation";
 
 const { Title, Paragraph, Text } = Typography;
 
 export default function HomePage() {
+  const router = useRouter();
   const { appName, version } = useAppStore();
 
   const features = [
     {
-      icon: <FolderOpenOutlined className={styles.featureIcon} />,
-      title: "文件中心",
-      description: "智能文件管理，支持多种格式上传与预览，AI 自动分类整理",
+      icon: <PictureOutlined className={styles.featureIcon} />,
+      title: "图库管理",
+      description:
+        "智能图片管理，支持瀑布流展示，便捷的预览、复制链接和下载功能",
       color: "#1890ff",
+      path: "/images",
     },
     {
       icon: <FileTextOutlined className={styles.featureIcon} />,
       title: "笔记管理",
       description: "结构化笔记系统，支持 Markdown 编辑，AI 辅助整理与搜索",
       color: "#52c41a",
+      path: "/notes",
     },
     {
       icon: <EditOutlined className={styles.featureIcon} />,
-      title: "写博客",
-      description: "AI 辅助写作，智能生成内容，一键发布分享",
+      title: "博客中心",
+      description: "AI 辅助写作，智能生成内容，一键发布分享您的想法",
       color: "#722ed1",
+      path: "/blog",
     },
   ];
 
@@ -62,12 +68,12 @@ export default function HomePage() {
     {
       icon: <ThunderboltOutlined className={styles.advantageIcon} />,
       title: "高效便捷",
-      description: "简洁直观的界面设计，快速上手，提升工作效率",
+      description: "简洁直观的界面设计，瀑布流展示、快速预览，提升工作效率",
     },
     {
       icon: <SafetyOutlined className={styles.advantageIcon} />,
       title: "安全可靠",
-      description: "企业级数据安全保障，多重加密保护您的知识资产",
+      description: "企业级数据安全保障，多重加密保护您的图片、笔记和博客内容",
     },
   ];
 
@@ -114,7 +120,7 @@ export default function HomePage() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <Paragraph className={styles.heroDescription}>
-                集文件管理、笔记记录、博客创作于一体，AI
+                集图库管理、笔记记录、博客创作于一体，AI
                 赋能，让您的知识管理更高效、更智能
               </Paragraph>
             </motion.div>
@@ -129,10 +135,13 @@ export default function HomePage() {
                   type="primary"
                   size="large"
                   icon={<ArrowRightOutlined />}
+                  onClick={() => router.push("/work-space")}
                 >
                   立即开始
                 </Button>
-                <Button size="large">了解更多</Button>
+                <Button size="large" onClick={() => router.push("/images")}>
+                  了解更多
+                </Button>
               </Space>
             </motion.div>
           </motion.div>
@@ -163,14 +172,16 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: false, margin: "-100px" }}
                   transition={{ duration: 0.4, delay: 0.5 }}
+                  onClick={() => router.push("/images")}
+                  style={{ cursor: "pointer" }}
                 >
                   <div
                     className={styles.itemIcon}
                     style={{ background: "#e6f7ff", color: "#1890ff" }}
                   >
-                    <FolderOpenOutlined />
+                    <PictureOutlined />
                   </div>
-                  <div className={styles.itemText}>文件中心</div>
+                  <div className={styles.itemText}>图库</div>
                 </motion.div>
                 <motion.div
                   className={styles.cardItem}
@@ -178,6 +189,8 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: false, margin: "-100px" }}
                   transition={{ duration: 0.4, delay: 0.6 }}
+                  onClick={() => router.push("/notes")}
+                  style={{ cursor: "pointer" }}
                 >
                   <div
                     className={styles.itemIcon}
@@ -193,6 +206,8 @@ export default function HomePage() {
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: false, margin: "-100px" }}
                   transition={{ duration: 0.4, delay: 0.7 }}
+                  onClick={() => router.push("/blog")}
+                  style={{ cursor: "pointer" }}
                 >
                   <div
                     className={styles.itemIcon}
@@ -200,7 +215,7 @@ export default function HomePage() {
                   >
                     <EditOutlined />
                   </div>
-                  <div className={styles.itemText}>写博客</div>
+                  <div className={styles.itemText}>博客中心</div>
                 </motion.div>
               </div>
             </motion.div>
@@ -237,6 +252,7 @@ export default function HomePage() {
                     styles={{
                       body: { padding: "32px 24px" },
                     }}
+                    onClick={() => router.push(feature.path)}
                   >
                     <div
                       className={styles.featureIconWrapper}
@@ -250,7 +266,14 @@ export default function HomePage() {
                     <Paragraph className={styles.featureDescription}>
                       {feature.description}
                     </Paragraph>
-                    <Button type="link" className={styles.featureLink}>
+                    <Button
+                      type="link"
+                      className={styles.featureLink}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(feature.path);
+                      }}
+                    >
                       了解更多 <ArrowRightOutlined />
                     </Button>
                   </Card>
@@ -354,7 +377,12 @@ export default function HomePage() {
               viewport={{ once: false, margin: "-100px" }}
               transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <Button type="primary" size="large" className={styles.ctaButton}>
+              <Button
+                type="primary"
+                size="large"
+                className={styles.ctaButton}
+                onClick={() => router.push("/work-space")}
+              >
                 免费开始使用
               </Button>
             </motion.div>

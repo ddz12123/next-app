@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface AppState {
   appName: string;
@@ -20,36 +21,42 @@ interface AppActions {
 }
 
 export const useAppStore = create<AppState & AppActions>()(
-  immer((set) => ({
-    appName: "AI 知识库",
-    version: "1.0.0",
-    showBeian: true,
-    beianNumber: "111111111111111",
-    icpLicense: "2222",
-    policeBeianNumber: "333",
-    setAppName: (name) =>
-      set((state) => {
-        state.appName = name;
-      }),
-    setVersion: (version) =>
-      set((state) => {
-        state.version = version;
-      }),
-    setShowBeian: (show) =>
-      set((state) => {
-        state.showBeian = show;
-      }),
-    setBeianNumber: (number) =>
-      set((state) => {
-        state.beianNumber = number;
-      }),
-    setIcpLicense: (license) =>
-      set((state) => {
-        state.icpLicense = license;
-      }),
-    setPoliceBeianNumber: (number) =>
-      set((state) => {
-        state.policeBeianNumber = number;
-      }),
-  }))
+  persist(
+    immer((set) => ({
+      appName: "AI 知识库",
+      version: "1.0.0",
+      showBeian: true,
+      beianNumber: "111111111111111",
+      icpLicense: "2222",
+      policeBeianNumber: "333",
+      setAppName: (name) =>
+        set((state) => {
+          state.appName = name;
+        }),
+      setVersion: (version) =>
+        set((state) => {
+          state.version = version;
+        }),
+      setShowBeian: (show) =>
+        set((state) => {
+          state.showBeian = show;
+        }),
+      setBeianNumber: (number) =>
+        set((state) => {
+          state.beianNumber = number;
+        }),
+      setIcpLicense: (license) =>
+        set((state) => {
+          state.icpLicense = license;
+        }),
+      setPoliceBeianNumber: (number) =>
+        set((state) => {
+          state.policeBeianNumber = number;
+        }),
+    })),
+    {
+      name: "app-storage",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
 );
